@@ -47,6 +47,14 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi</locationURI>
 		</link>
 		<link>
+<<<<<<< HEAD
+=======
+			<name>libraries/PushBullet</name>
+			<type>2</type>
+			<location>D:/Arduino/libraries/PushBullet</location>
+		</link>
+		<link>
+>>>>>>> 7636110adbf5995d289813089ec483539cd76903
 			<name>libraries/SPI</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.4.1/libraries/SPI</locationURI>
