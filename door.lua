@@ -1,5 +1,6 @@
 -- Pins
 LED_PIN = 8
+ERROR_PIN = 5
 SWITCH_PIN = 7
 
 --Load secrets
@@ -33,9 +34,13 @@ function sendDoorOpen()
         -- Confirmed door opening
         postUpdate(true)
         print("Door opened")
+        gpio.write(LED_PIN, gpio.LOW)
+        gpio.trig(SWITCH_PIN, "low",onDoorClose)
+    else
+        print("Cancelled")
+        gpio.write(LED_PIN, gpio.LOW)
+        gpio.trig(SWITCH_PIN, "high",onDoorOpen)
     end
-    gpio.write(LED_PIN, gpio.LOW)
-    gpio.trig(SWITCH_PIN, "low",onDoorClose)
 end
 
 function sendDoorClosed()
@@ -44,9 +49,13 @@ function sendDoorClosed()
         -- Confirmed door close
         postUpdate(false)
         print("Door Closed")
+        gpio.write(LED_PIN, gpio.LOW)
+        gpio.trig(SWITCH_PIN, "high",onDoorOpen)
+    else
+        print("Cancelled")
+        gpio.write(LED_PIN, gpio.LOW)
+        gpio.trig(SWITCH_PIN, "low",onDoorClose)
     end
-    gpio.write(LED_PIN, gpio.LOW)
-    gpio.trig(SWITCH_PIN, "high",onDoorOpen)
 end
 
 function postUpdate(opened)
@@ -71,8 +80,19 @@ function postUpdate(opened)
     conn:connect(443,"joinjoaomgcd.appspot.com")
 end
 
+function checkWiFi()
+    if(wifi.sta.getip() == nil) then
+        gpio.write(ERROR_PIN, gpio.HIGH)
+        print("WiFi not connected")
+    else
+        gpio.write(ERROR_PIN, gpio.LOW)
+    end
+end
+
 -- Set Pins
 gpio.mode(LED_PIN,gpio.OUTPUT)
+gpio.mode(ERROR_PIN, gpio.OUTPUT)
+gpio.write(ERROR_PIN, gpio.LOW)
 gpio.mode(SWITCH_PIN, gpio.INT)
 gpio.trig(SWITCH_PIN, "high",onDoorOpen)
 
@@ -85,3 +105,4 @@ print("WiFi status ".. wifi.sta.status())
 gpio.write(LED_PIN, gpio.HIGH)
 tmr.delay(3000000) -- 3 sec init led
 gpio.write(LED_PIN, gpio.LOW)
+tmr.alarm(6,3000,tmr.ALARM_AUTO,checkWiFi)
